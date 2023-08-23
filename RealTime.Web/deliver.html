@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WS Deliver</title>
+    <style>
+      #form div {
+        margin: 12px;
+      }
+      #form div label {
+        display: inline-block;
+        width: 70px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WS Deliver</h1>
+    <hr />
+    <div id="form">
+      <div>
+        <label style="color:brown; font-weight: bold;">API URL</label>
+        <input value="http://localhost:5050/send" id="path" />
+      </div>
+      <div>
+        <label>topic</label>
+        <input value="apple" id="topic" placeholder="topic" />
+      </div>
+      <div>
+        <label>message</label>
+        <input value="10" id="message" placeholder="message" />
+      </div>
+      <div>
+        <button id="btn-send">send</button>
+        <span> | </span>
+        <button id="btn-interval">interval random</button>
+      </div>
+      
+    </div>
+
+    <script>
+      const $path = document.getElementById('path')
+      const $topic = document.getElementById('topic')
+      const $message = document.getElementById('message')
+      const $btnSend = document.getElementById('btn-send')
+      const $btnInterval = document.getElementById('btn-interval')
+      const handleSend = async () => {
+        const url = `${$path.value}/${$topic.value}/${$message.value}`
+        await fetch(url)
+      }
+
+      $btnSend.addEventListener('click', handleSend)
+
+      let interval
+      $btnInterval.addEventListener('click', () => {
+        if (interval) {
+          clearInterval(interval)
+          interval = null
+          $btnSend.disabled  = false
+        } else {
+          interval = setInterval(() => {
+            $message.value = +$message.value + (10 - Math.floor(Math.random() * 21))
+            handleSend()
+          }, 1000)
+          $btnSend.disabled  = true
+        }
+      });
+    </script>
+  </body>
+</html>

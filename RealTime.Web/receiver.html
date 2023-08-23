@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WS Receiver</title>
+    <style>
+      #form div {
+        margin: 12px;
+      }
+      #form div label {
+        display: inline-block;
+        width: 70px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WS Receiver</h1>
+    <hr />
+    <div id="form"></div>
+    <div>
+      <button id="btnClear">clear message</button>
+      <ul id="messages"></ul>
+    </div>
+    
+    <script src="./setupReceiver.js"></script>
+    <script>
+      setupReceiver('form',(data) => messages.innerHTML += `<li>${data}</li>`)
+      btnClear.addEventListener('click', () => {
+        messages.innerHTML = ''
+      })
+    </script>
+  </body>
+</html>

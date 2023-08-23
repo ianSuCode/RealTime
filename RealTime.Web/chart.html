@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WS Chart</title>
+    <style>
+      #form div {
+        margin: 12px;
+      }
+      #form div label {
+        display: inline-block;
+        width: 70px;
+      }
+      #chart-box {
+        max-height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WS Chart</h1>
+    <hr />
+    <div id="form"></div>
+    <div id="chart-box"><canvas id="myChart"></canvas></div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./setupReceiver.js"></script>
+    <script>
+      const createOneMinuteArray = () => {
+        const result = []
+        const now = new Date()
+        const oneMinuteAgo = new Date(now - 60 * 1000) // 1 minute ago
+
+        let currentDate = new Date(oneMinuteAgo)
+
+        while (currentDate < now) {
+          result.push(currentDate.toLocaleTimeString().substring(0, 8))
+          currentDate.setSeconds(currentDate.getSeconds() + 1)
+        }
+
+        return result
+      }
+
+      const createValues = (count) => {
+        const result = []
+        for (let i = 0; i < count; i++) {
+          result.push(10 - Math.floor(Math.random() * 21))
+        }
+        return result
+      }
+
+      const addData = (chart, label, newData) => {
+        chart.data.labels.push(label)
+        chart.data.datasets.forEach((dataset) => {
+          dataset.data.push(newData)
+        })
+        chart.update()
+      }
+
+      const removeData = (chart) => {
+        chart.data.labels.shift()
+        chart.data.datasets.forEach((dataset) => {
+          dataset.data.shift()
+        })
+        chart.update()
+      }
+      const ctx = document.getElementById('myChart')
+
+      const lables = createOneMinuteArray()
+      const values = createValues(lables.length)
+      const data = {
+        labels: lables,
+        datasets: [
+          {
+            data: values,
+            tension: 0.1
+          }
+        ]
+      }
+      const myChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+        }
+      })
+
+      const add = (data) => {
+        const [label, value] = data.split(';')
+        addData(
+          myChart,
+          new Date(label).toLocaleTimeString().substring(0, 8),
+          value
+        )
+        removeData(myChart)
+      }
+      setupReceiver('form', add)
+    </script>
+  </body>
+</html>
